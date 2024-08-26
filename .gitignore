@@ -1,0 +1,5 @@
+.vs
+ProgettoTest\bin
+ProgettoTest\obj
+ProgettoTest\obj\Debug\net8.0
+ProgettoTest\appsettings.json
