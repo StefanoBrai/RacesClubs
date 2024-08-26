@@ -11,11 +11,13 @@ namespace ProgettoTest.Controllers
     {
         private readonly IRaceRepository _raceRepository;
         private readonly IPhotoService _photoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RaceController(IRaceRepository raceRepository, IPhotoService photoService)
+        public RaceController(IRaceRepository raceRepository, IPhotoService photoService, IHttpContextAccessor httpContextAccessor)
         {
             _raceRepository = raceRepository;
             _photoService = photoService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #region Get All
@@ -39,7 +41,13 @@ namespace ProgettoTest.Controllers
         #region Create
         public IActionResult Create() 
         {
-            return View();
+            var currentUserId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var createRaceVM = new CreateRaceViewModel()
+            {
+                AppUserId = currentUserId
+            };
+
+            return View(createRaceVM);
         }
 
         [HttpPost]
@@ -54,6 +62,7 @@ namespace ProgettoTest.Controllers
                     Title = raceVM.Title,
                     Description = raceVM.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = raceVM.AppUserId,
                     Address = new Address
                     {
                         Street = raceVM.Address.Street,
@@ -125,7 +134,7 @@ namespace ProgettoTest.Controllers
 
                         ModelState.AddModelError("", "Could not delete photo");
 
-                        return View(race);
+                        return View(raceVM);
                     }
 
                 }

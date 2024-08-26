@@ -12,11 +12,13 @@ namespace ProgettoTest.Controllers
     {
         private readonly IClubRepository _clubRepository;
         private readonly IPhotoService _photoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClubController(IClubRepository clubRepository, IPhotoService photoService)
+        public ClubController(IClubRepository clubRepository, IPhotoService photoService, IHttpContextAccessor httpContextAccessor)
         {
             _clubRepository = clubRepository;
             _photoService = photoService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #region Get All
@@ -40,7 +42,12 @@ namespace ProgettoTest.Controllers
         #region Create
         public IActionResult Create() 
         {
-            return View();
+            var currentUserId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var createClubVM = new CreateClubViewModel()
+            {
+                AppUserId = currentUserId
+            };
+            return View(createClubVM);
         }
 
         [HttpPost]
@@ -55,6 +62,7 @@ namespace ProgettoTest.Controllers
                     Title = clubVM.Title,
                     Description = clubVM.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = clubVM.AppUserId,
                     Address = new Address
                     {
                         Street = clubVM.Address.Street,
