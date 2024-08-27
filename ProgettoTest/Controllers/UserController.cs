@@ -25,7 +25,8 @@ namespace ProgettoTest.Controllers
                     Id = user.Id,
                     UserName = user.UserName,
                     Pace = user.Pace,
-                    Mileage = user.Mileage
+                    Mileage = user.Mileage,
+                    ProfileImageUrl = user.ProfileImageUrl
                 };
 
                 result.Add(userVM);
@@ -42,7 +43,8 @@ namespace ProgettoTest.Controllers
                 Id = user.Id,
                 UserName = user.UserName,
                 Pace = user.Pace,
-                Mileage = user.Mileage
+                Mileage = user.Mileage,
+                ProfileImageUrl = user.ProfileImageUrl
             };
 
             return View(userDetailVM);

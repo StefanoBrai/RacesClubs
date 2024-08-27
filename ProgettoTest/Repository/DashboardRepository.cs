@@ -1,4 +1,5 @@
-﻿using ProgettoTest.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ProgettoTest.Data;
 using ProgettoTest.Interfaces;
 using ProgettoTest.Models;
 
@@ -32,13 +33,9 @@ namespace ProgettoTest.Repository
             return await _context.Users.FindAsync(id);
         }
 
-        //public async Task<AppUser> GetByIdNoTracking(string id)
-        //{
-        //    return await _context.Users.Where(u => u.Id == id).AsNoTracking().FirstOrDefaultAsync();
-        //}
-        public Task<AppUser> GetByIdNoTracking(string id)
+        public async Task<AppUser> GetByIdNoTracking(string id)
         {
-            throw new NotImplementedException();
+            return await _context.Users.Where(u => u.Id == id).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public bool Update(AppUser user)
