@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgettoTest.Data;
+using ProgettoTest.Extensions;
 using ProgettoTest.Interfaces;
 using ProgettoTest.Models;
+using X.PagedList;
 
 namespace ProgettoTest.Repository
 {
@@ -26,9 +28,16 @@ namespace ProgettoTest.Repository
             return Save();
         }
 
-        public async Task<IEnumerable<Club>> GetAll()
+        public IQueryable<Club> GetAll()
         {
-            return await _context.Clubs.ToListAsync();
+            return _context.Clubs;
+        }
+
+        public async Task<IPagedList<Club>> GetPagedClubsAsync(int pageNumber, int pageSize)
+        {
+            return await _context.Clubs
+                .OrderBy(c => c.Title) // Ordina per un campo, ad esempio il nome
+                .ToPagedListAsync(pageNumber, pageSize);
         }
 
         public async Task<Club> GetByIdAsync(int id)

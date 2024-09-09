@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using ProgettoTest.Data;
+using ProgettoTest.Extensions;
 using ProgettoTest.Interfaces;
 using ProgettoTest.Models;
 using ProgettoTest.ViewModels;
@@ -22,11 +23,27 @@ namespace ProgettoTest.Controllers
         }
 
         #region Get All
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, int page = 1)
         {
-            var clubs = await _clubRepository.GetAll();
+            ViewData["CurrentSort"] = sortOrder;
 
-            return View(clubs);
+            ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["LocationSortParm"] = sortOrder == "Location" ? "location_desc" : "Location";
+
+            var clubs = _clubRepository.GetAll();
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    clubs = clubs.OrderByDescending(c => c.Title);
+                    break;
+                default:
+                    clubs = clubs.OrderBy(c => c.Title);
+                    break;
+            }
+
+            var pagedClubs = await clubs.ToPagedListAsync(page, 3);
+            return View(pagedClubs);
         }
         #endregion
 

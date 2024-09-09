@@ -1,35 +1,61 @@
-﻿@model IEnumerable<Club>
+﻿@using X.PagedList
+@using X.Web.PagedList
+@model IPagedList<Club>
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+<div class="container mt-4">
+    <h2>Club List</h2>
 
-<h3>Clubs</h3>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]">Title</a>
+                </th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Actions</th>
+                <!-- Aggiungi altre colonne se necessario -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var club in Model)
+            {
+                <tr>
+                    <td>@club.Title</td>
+                    <td>@club.Description</td>
+                    <td>
+                        <img src="@club.Image" alt="Logo of @club.Title" class="img-fluid" style="min-height: 100px; max-width: 100px;">
+                    </td>
+                    <td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                        {
+                            <a asp-controller="Club" asp-action="Edit" asp-route-id="@club.Id" type="button" class="btn btn-sm btn-outline-secondary-g">Edit</a>
+                            <a asp-controller="Club" asp-action="Delete" asp-route-id="@club.Id" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                        }
+                    </td>
+                    <!-- Aggiungi altre celle se necessario -->
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-    @foreach (var item in Model)
-    {
-        <div class="col">
-            <div class="card shadow-sm">
-                <img src="@item.Image" width="100%" alt="Running image"/>
-                <div class="card-body">
-                    <p class="card-text">@item.Title</p>
-                    <p class="card-text">@item.Description</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <a asp-controller="Club" asp-action="Detail" asp-route-id="@item.Id" type="button" class="btn btn-sm btn-outline-secondary">View</a>
-                            @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
-                            {
-                                <a asp-controller="Club" asp-action="Edit" asp-route-id="@item.Id" type="button" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                <a asp-controller="Club" asp-action="Delete" asp-route-id="@item.Id" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
-                            }
-                        </div>
-                        <small class="text-body-secondary">@item.ClubCategory</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+    <div>
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewData["CurrentSort"] }), new PagedListRenderOptions
+       {
+           DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+           DisplayLinkToLastPage = PagedListDisplayMode.Always,
+           DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+           DisplayLinkToNextPage = PagedListDisplayMode.Always,
+           Display = PagedListDisplayMode.Always,
+           DisplayPageCountAndCurrentLocation = true,
+           DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+           MaximumPageNumbersToDisplay = 5,
+           ClassToApplyToFirstListItemInPager = "first",
+           ClassToApplyToLastListItemInPager = "last",
+           ContainerDivClasses = new[] { "pagination-container mt-4" },
+           UlElementClasses = new[] { "pagination" },
+           LiElementClasses = new[] { "page-item" },
+           PageClasses = new[] { "page-link" }
+       })
+    </div>
 </div>
